@@ -20,6 +20,7 @@ end
         </section>
         <!-- /.content -->
     </div>
+
     <!-- Modal for custom disable time -->
     <div class="modal fade" id="customDisableModal" tabindex="-1" role="dialog" aria-labelledby="customDisableModalLabel">
         <div class="modal-dialog modal-sm" role="document">
@@ -48,6 +49,35 @@ end
             </div>
         </div>
     </div> <!-- /.content-wrapper -->
+
+    <div class="modal fade" id="guessNumberModal" tabindex="-1" role="dialog" aria-labelledby="guessNumberModalLabel" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="btnHeaderCloseGuess"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="guessNumberModalLabel">Security Challenge</h4>
+                </div>
+                <div class="modal-body">
+                    <div id="guessGameBody">
+                        <p class="text-center">Guess the secret number (0-9) to unlock custom disable settings.</p>
+                        <div class="form-group">
+                            <input id="userGuess" class="form-control text-center" type="number" min="0" max="9" placeholder="Enter number...">
+                        </div>
+                    </div>
+                    <div id="cooldownBody" style="display: none;">
+                        <div class="alert alert-danger text-center" style="margin-bottom: 0;">
+                            <i class="fa-solid fa-clock"></i> Incorrect guess!, the number was <strong id="revealedNumber"></strong> <br>
+                            Cooldown: <span id="cooldownSeconds">10</span>s remaining.
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" id="btnCancelGuess">Cancel</button>
+                    <button type="button" class="btn btn-warning" id="btnSubmitGuess">Guess</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <footer class="main-footer">
         <div class="row row-centered text-center">

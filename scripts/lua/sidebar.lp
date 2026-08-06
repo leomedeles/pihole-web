@@ -87,18 +87,14 @@
                 <li class="header text-uppercase">DNS Control</li>
                 <!-- Enable/Disable Blocking -->
                 <li id="pihole-disable" class="menu-dns treeview">
-                    <a href="<?=webhome?>#">
+                    <a href="<?=webhome?>#" id="pihole-disable-main-btn">
                         <i class="fa fa-fw menu-icon fa-stop"></i> <span>Disable Blocking&nbsp;&nbsp;&nbsp;<span id="flip-status-disable"></span></span>
                         <span class="pull-right-container">
                             <i class="fa fa-angle-left pull-right"></i>
                         </span>
                     </a>
                     <ul class="treeview-menu">
-                        <li>
-                            <a href="<?=webhome?>#" id="pihole-disable-indefinitely">
-                                <i class="fa fa-fw menu-icon fa-infinity"></i> Indefinitely
-                            </a>
-                        </li>
+                        
                         <li>
                             <a href="<?=webhome?>#" id="pihole-disable-10s">
                                 <i class="fa fa-fw menu-icon fa-clock"></i> For 10 seconds

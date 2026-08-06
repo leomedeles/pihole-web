@@ -624,6 +624,91 @@ $(() => {
   }
 });
 
+let challengeSecretNumber = null;
+let challengeCooldownTimer = null;
+let challengeCooldownRemaining = 0;
+let menuUnlocked = false; // Tracks if the user has passed the game
+
+// Intercept the main sidebar menu click
+$("#pihole-disable-main-btn").on("click", function(e) {
+	const parentMenu = $("#pihole-disable");
+	if (parentMenu.hasClass("menu-open")) {
+    menuUnlocked = false;
+    return;
+	}
+	
+	if (!menuUnlocked) {
+		// Stop the menu from expanding
+		e.preventDefault();
+		e.stopPropagation();
+	
+		// Prepare and show the challenge modal
+		if (challengeCooldownRemaining <= 0) {
+			clearInterval(challengeCooldownTimer);
+			challengeCooldownTimer = null;
+			challengeSecretNumber = Math.floor(Math.random() * 10);
+			// Return back to Step 2 input state
+			$("#userGuess").val("");
+			$("#guessGameBody").show();
+			$("#cooldownBody").hide();
+			$("#btnSubmitGuess").prop("disabled", false);
+			$("#btnHeaderCloseGuess, #btnCancelGuess").show();
+		}
+		$("#guessNumberModal").modal("show");
+	}
+});
+
+// Manage Guess Submission
+$("#btnSubmitGuess").on("click", () => {
+	if (challengeCooldownRemaining > 0) return;
+	
+	const userGuessVal = parseInt($("#userGuess").val(), 10);
+
+	if (isNaN(userGuessVal) || userGuessVal < 0 || userGuessVal > 9) {
+		alert("Please enter a valid number between 0 and 9.");
+		return;
+	}
+
+	if (userGuessVal === challengeSecretNumber) {
+		// CORRECT: Unlock menu and close modal
+		menuUnlocked = true;
+		$("#guessNumberModal").modal("hide");
+		// Allow time for the modal to close, then simulate a click to expand the menu natively
+		setTimeout(() => {
+			$("#pihole-disable-main-btn").trigger("click");
+			menuUnlocked = false;
+		}, 400); // Small timeout to allow transition animation
+	} else {
+		// INCORRECT: Initiate 10-second cooldown layout
+		challengeCooldownRemaining = 10;
+		$("#revealedNumber").text(challengeSecretNumber);
+		challengeSecretNumber = Math.floor(Math.random() * 10);
+		$("#btnHeaderCloseGuess, #btnCancelGuess").hide();
+		$("#guessGameBody").hide();
+		$("#cooldownBody").show();
+		$("#cooldownSeconds").text(challengeCooldownRemaining);
+		$("#btnSubmitGuess").prop("disabled", true);
+		
+		challengeCooldownTimer = setInterval(() => {
+			challengeCooldownRemaining--;
+			if (challengeCooldownRemaining <= 0) {
+				clearInterval(challengeCooldownTimer);
+				challengeCooldownTimer = null;
+				$("#userGuess").val("");
+				$("#guessGameBody").show();
+				$("#cooldownBody").hide();
+				$("#btnSubmitGuess").prop("disabled", false);
+				$("#btnHeaderCloseGuess, #btnCancelGuess").show();
+			} else {
+				$("#cooldownSeconds").text(challengeCooldownRemaining);
+			}
+		}, 1000);
+	}
+});
+// Reset the lock when any specific disable option is chosen
+$("#pihole-disable-indefinitely, #pihole-disable-10s, #pihole-disable-30s, #pihole-disable-5m, #pihole-disable-custom").on("click", () => {
+  menuUnlocked = false;
+});
 // Handle Enable/Disable
 $("#pihole-enable").on("click", e => {
   e.preventDefault();
@@ -646,6 +731,7 @@ $("#pihole-disable-5m").on("click", e => {
   e.preventDefault();
   piholeChange("disable", "300");
 });
+
 $("#pihole-disable-custom").on("click", e => {
   e.preventDefault();
   let custVal = $("#customTimeout").val();
